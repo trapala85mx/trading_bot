@@ -1,13 +1,10 @@
 # Pyhton
-import asyncio
 # Project
-from typing import Callable, List
-from . import BaseExchange
+from typing import Callable
+from abstracts.exchange import BaseExchange
+from abstracts.order import Order
 # Third party
 from binance import AsyncClient, BinanceSocketManager
-from binance import enums
-
-from ..models import Order
 
 
 class Binance(BaseExchange):
@@ -38,7 +35,7 @@ class Binance(BaseExchange):
 
         if not (start is None) and not (end is None):
             return await self._client.futures_klines(symbol=symbol.lower(), interval=interval,
-                                               start=start, end=end, limit=limit)
+                                                     start=start, end=end, limit=limit)
 
     async def get_exchange_info(self, category: str = "linear", symbol: str | None = None):
         await self._create_client()
@@ -55,7 +52,7 @@ class Binance(BaseExchange):
                 await callback(res)
 
     async def user_socket(self, callback: Callable):
-        await  self._crete_socket_manager()
+        await self._crete_socket_manager()
         user_stream = self._bsm.futures_user_socket()
         async with user_stream as us:
             while True:
@@ -67,3 +64,21 @@ class Binance(BaseExchange):
             await self._client.close_connection()
             self._client = None
 
+    async def create_market_order(self, order: Order):
+        await self._create_client()
+        resp = await self._client.futures_create_order(
+            symbol=order.symbol.upper(),
+            type=order.position_type,
+            quantity=order.qty,
+            positionSide=order.position_side
+        )
+        return resp
+
+    async def create_limit_order(self, order: dict):
+        pass
+
+    async def cancel_order(self, data: dict):
+        pass
+
+    async def modify_order(self, data: dict):
+        pass

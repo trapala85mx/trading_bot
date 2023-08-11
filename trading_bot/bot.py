@@ -1,9 +1,9 @@
 # Python
 import asyncio
+from decimal import Decimal
 # Project
-from exchanges import BaseExchange
-from exchanges import Binance
-
+from models.market_order import MarketOrder
+from exchanges.binance import Binance
 # Third party
 from decouple import config
 import binance.enums as tf
@@ -28,18 +28,28 @@ async def main():
     interval = tf.KLINE_INTERVAL_15MINUTE
 
     try:
-        #data = await exchange.get_klines(interval=interval, symbol=symbol)
-        #data = await exchange.get_exchange_info() # sin symbol
-        #data = await exchange.get_exchange_info(symbol=symbol)  # conn symbol
-        #print(data)
-        #await exchange.kline_socket(symbol=symbol, timeframe=interval, callback=process_message)
-        #await exchange.user_socket(callback=process_message)
+        # data = await exchange.get_klines(interval=interval, symbol=symbol)
+        # data = await exchange.get_exchange_info() # sin symbol
+        # data = await exchange.get_exchange_info(symbol=symbol)  # conn symbol
+        # print(data)
+        # await exchange.kline_socket(symbol=symbol, timeframe=interval, callback=process_message)
+        # await exchange.user_socket(callback=process_message)
+        market_order = MarketOrder(
+            symbol="BTCUSD",
+            position_side="LONG",
+            position_type="MARGIN",
+            qty=Decimal('0.1')
+        )
+        
+        # La información que retorna solo es de la posición colocada más no de la posición abierta
+        resp = await exchange.create_market_order(order=market_order)
+        print(resp)
 
-        pass
     except Exception as e:
         print(e)
     finally:
         await exchange.close_connection()
+
 
 if __name__ == '__main__':
     asyncio.run(main())

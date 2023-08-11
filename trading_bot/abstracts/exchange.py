@@ -1,7 +1,10 @@
 # Python
 from abc import ABCMeta, abstractmethod
-from typing import Callable, List
+from typing import Callable
 # Project
+# from ..models.order import Order
+# from trading_bot import Order
+from .order import Order
 
 
 class BaseExchange(metaclass=ABCMeta):
@@ -33,4 +36,18 @@ class BaseExchange(metaclass=ABCMeta):
         pass
 
     # Account Endpoints
-    
+    @abstractmethod
+    async def create_market_order(self, order: Order):
+        pass
+
+    @abstractmethod
+    async def create_limit_order(self, order: Order):
+        pass
+
+    @abstractmethod
+    async def cancel_order(self, data: Order):
+        pass
+
+    @abstractmethod
+    async def modify_order(self, data: Order):
+        pass
