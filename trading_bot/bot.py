@@ -2,7 +2,6 @@
 import asyncio
 from decimal import Decimal
 # Project
-from models.market_order import MarketOrder
 from exchanges.binance import Binance
 # Third party
 from decouple import config
@@ -22,11 +21,10 @@ async def main():
 
     # Creamos el objeto Exchange que será algo abstracto para que se iguale a lo que ingrese el usuario
     exchange = Binance(api_key=config("API_KEY"), api_secret=config("API_SECRET"))
-
     # Datos para ejemplo
-    symbol = "maticusdt"
+    symbol = "manausdt"
     interval = tf.KLINE_INTERVAL_15MINUTE
-
+    
     try:
         # data = await exchange.get_klines(interval=interval, symbol=symbol)
         # data = await exchange.get_exchange_info() # sin symbol
@@ -34,16 +32,25 @@ async def main():
         # print(data)
         # await exchange.kline_socket(symbol=symbol, timeframe=interval, callback=process_message)
         # await exchange.user_socket(callback=process_message)
-        market_order = MarketOrder(
-            symbol="BTCUSD",
-            position_side="LONG",
-            position_type="MARGIN",
-            qty=Decimal('0.1')
-        )
-        
-        # La información que retorna solo es de la posición colocada más no de la posición abierta
-        resp = await exchange.create_market_order(order=market_order)
-        print(resp)
+
+        # Probando extraer Exchange Mode - OK
+        await exchange.get_current_position_mode()
+        #print(exchange.hedge_mode)
+        ## La información que retorna solo es de la posición colocada más no de la posición abierta
+        market_order_params = {
+            'quantity' : '14',
+            'symbol' : symbol
+        }
+
+        # Probando Ordnes Market - OK
+        #resp = await exchange.create_buy_market_order(params=market_order_params)
+        #print(resp)
+        #resp = await exchange.create_sell_market_order(params=market_order_params)
+        #print(resp)
+
+        # Probando Ordenes Limit
+
+        print("Fin")
 
     except Exception as e:
         print(e)
