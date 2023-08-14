@@ -31,7 +31,7 @@ async def main():
         # data = await exchange.get_exchange_info(symbol=symbol)  # conn symbol
         # print(data)
         # await exchange.kline_socket(symbol=symbol, timeframe=interval, callback=process_message)
-        # await exchange.user_socket(callback=process_message)
+        #await exchange.user_socket(callback=process_message)
 
         # Probando extraer Exchange Mode - OK
         await exchange.get_current_position_mode()
@@ -74,8 +74,16 @@ async def main():
         #}
         ##resp = await exchange.set_stop_loss_for_short_position(params=sl_for_shorts_param)
         #resp = await exchange.set_stop_loss_for_long_position(params=sl_for_shorts_param)
-        print(resp)
+        #print(resp)
 
+        # ORDENES TP LIMIT - OK
+        #take_profit_for_short_pos_params = {
+        #    'symbol': "BTCUSDT",
+        #    'quantity': Decimal('0.002'),
+        #    'stop_loss_price': Decimal('29001.5')
+        #}
+        #resp = await exchange.set_take_profit_for_short_position_in_hedge_mode(params=take_profit_for_short_pos_params)
+        #print(resp)
         print("Fin")
 
     except Exception as e:

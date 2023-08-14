@@ -89,5 +89,13 @@ class BaseExchange(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    async def set_take_profit_for_long_position_in_hedge_mode(self, params: dict):
+        pass
+
+    @abstractmethod
+    async def set_take_profit_for_short_position_in_hedge_mode(self, params: dict):
+        pass
+
+    @abstractmethod
     async def get_current_position_mode(self):
         pass

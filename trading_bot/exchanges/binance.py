@@ -168,6 +168,34 @@ class Binance(BaseExchange):
         )
         return resp
 
+    async def set_take_profit_for_long_position_in_hedge_mode(self, params: dict):
+        side = "SELL"
+        await self._create_client()
+        resp = await self._client.futures_create_order(
+            type="LIMIT",
+            symbol=params["symbol"],
+            price=params["stop_loss_price"],
+            side=side,
+            quantity=params['quantity'],
+            positionSide=await self._set_position_side_for_hedge_mode(side="BUY"),
+            timeInForce="GTC"
+        )
+        return resp
+
+    async def set_take_profit_for_short_position_in_hedge_mode(self, params: dict):
+        side = "BUY"
+        await self._create_client()
+        resp = await self._client.futures_create_order(
+            type="LIMIT",
+            symbol=params["symbol"],
+            price=params["stop_loss_price"],
+            side=side,
+            quantity=params['quantity'],
+            positionSide=await self._set_position_side_for_hedge_mode(side="SELL"),
+            timeInForce="GTC"
+        )
+        return resp
+
     # METHODS
     async def _set_position_side_for_hedge_mode(self, side: str) -> str:
         if self._hedge_mode and side == "BUY":
