@@ -73,15 +73,19 @@ class BaseExchange(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    async def create_limit_order(self, params:dict):
+    async def create_buy_limit_order(self, params:dict):
         pass
 
     @abstractmethod
-    async def cancel_order(self, params:dict):
+    async def create_sell_limit_order(self, params:dict):
         pass
 
     @abstractmethod
-    async def modify_order(self, params:dict):
+    async def set_stop_loss_for_long_position(self, params:dict):
+        pass
+
+    @abstractmethod
+    async def set_stop_loss_for_short_position(self, params: dict):
         pass
 
     @abstractmethod

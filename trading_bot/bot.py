@@ -48,7 +48,33 @@ async def main():
         #resp = await exchange.create_sell_market_order(params=market_order_params)
         #print(resp)
 
-        # Probando Ordenes Limit
+        # Probando Ordenes Limit - OK
+
+        #buy_limit_order_params = {
+        #    'symbol': 'BTCUSDT',
+        #    'entry_price': Decimal('28966'),
+        #    'quantity': Decimal('0.001')
+        #}
+        #resp = await exchange.create_buy_limit_order(params=buy_limit_order_params)
+        #print(resp)
+
+        #sell_limit_order_params = {
+        #    'symbol': 'BTCUSDT',
+        #    'entry_price': Decimal('29226.4'),
+        #    'quantity': Decimal('0.001')
+        #}
+        #resp = await exchange.create_sell_limit_order(params=sell_limit_order_params)
+        #print(resp)
+
+        # PRoBANDO ORDENES STOP LOSS - OK
+        #sl_for_shorts_param = {
+        #    'symbol': 'BTCUSDT',
+        #    'stop_loss_price': Decimal('29484.5'), # Para posicion corta
+        #    'stop_loss_price': Decimal('29035.5'), # para posicion larga
+        #}
+        ##resp = await exchange.set_stop_loss_for_short_position(params=sl_for_shorts_param)
+        #resp = await exchange.set_stop_loss_for_long_position(params=sl_for_shorts_param)
+        print(resp)
 
         print("Fin")
 

@@ -118,19 +118,55 @@ class Binance(BaseExchange):
         side = "BUY"
         await self._create_client()
         resp = await self._client.futures_create_order(
+            type="LIMIT",
             symbol=params["symbol"],
+            price=Decimal(params["entry_price"]),
+            quantity=Decimal(params["quantity"]),
             side=side,
             positionSide=await self._set_position_side_for_hedge_mode(side=side),
-            type="LIMIT",
-            price=Decimal(params["entry_price"]),
-            quantity=Decimal(params["quantity"])
+            timeInForce="GTC"
         )
+        return resp
 
-    async def cancel_order(self, params: dict):
-        pass
+    async def create_sell_limit_order(self, params: dict):
+        side = "SELL"
+        await self._create_client()
+        resp = await self._client.futures_create_order(
+            type="LIMIT",
+            symbol=params["symbol"],
+            price=Decimal(params["entry_price"]),
+            quantity=Decimal(params["quantity"]),
+            side=side,
+            positionSide=await self._set_position_side_for_hedge_mode(side=side),
+            timeInForce="GTC"
+        )
+        return resp
 
-    async def modify_order(self, params: dict):
-        pass
+    async def set_stop_loss_for_long_position(self, params: dict):
+        side = "SELL"
+        await self._create_client()
+        resp = await self._client.futures_create_order(
+            type="STOP_MARKET",
+            symbol=params["symbol"],
+            side=side,
+            stopPrice=params["stop_loss_price"],
+            closePosition=True,
+            positionSide=await self._set_position_side_for_hedge_mode(side="BUY"),
+        )
+        return resp
+
+    async def set_stop_loss_for_short_position(self, params: dict):
+        side = "BUY"
+        await self._create_client()
+        resp = await self._client.futures_create_order(
+            type="STOP_MARKET",
+            symbol=params["symbol"],
+            side=side,
+            stopPrice=params["stop_loss_price"],
+            closePosition=True,
+            positionSide=await self._set_position_side_for_hedge_mode(side="SELL"),
+        )
+        return resp
 
     # METHODS
     async def _set_position_side_for_hedge_mode(self, side: str) -> str:
