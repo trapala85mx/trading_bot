@@ -3,6 +3,8 @@ import asyncio
 from decimal import Decimal
 # Project
 from exchanges.binance import Binance
+from models.asset import Asset
+from data import info
 # Third party
 from decouple import config
 import binance.enums as tf
@@ -14,15 +16,37 @@ async def process_message(msg: dict):
 
 async def main():
     print("Hola")
-    # 1. Solicitar Estrategia a usar
+    # 1. Solicitar symbol
+    symbol = "MANAUSDT"
+    print("Creando Asset")
+    asset = Asset(symbol=symbol)
+
+    # 2. En teoría, con el AssetDao extraemos la información de la moneda pero ahorita no tememos
+    #    la BD para extraer y tabién Creamos un OrderDao que guardará los datos de órdenes en BD
+    #    El OrderDao será inyectado a la estrategia
+    asset.price_precision = info[symbol.lower()]["price_precision"]
+    asset.qty_precision = info[symbol.lower()]["qty_precision"]
+    asset.min_price = info[symbol.lower()]["min_price"]
+    asset.min_qty = info[symbol.lower()]["min_qty"]
+    print("Asset Creado")
+
+    # 3. Creando Exchange
+    exchange = Binance(api_key=config("API_KEY"), api_secret=config("API_SECRET"))
+
+    # 4. Crear Notifier. Por el momento lo omitimos
+
+    # 5. Solicitamos y creamos la estrategia. La estraegía recibirá el exchange para poder ejecutar lo que
+    #    necesite de este; el order_dao será inyectado para poder guardar datos de órdenes creadas. Por otra
+    #    parte, la estrategia creará las Ordenes necesarias, es decir, crear instnacias de Order y también
+    #    necesitará que le inyecten el objeto asset para poder obtener datos particulares de la moneda
+
 
     # 2. Solicitar Exchange a usar
     # Por el momento solo tenemos 1 estrategua y 1 exchange por lo que omitimos lo anterior
 
     # Creamos el objeto Exchange que será algo abstracto para que se iguale a lo que ingrese el usuario
-    exchange = Binance(api_key=config("API_KEY"), api_secret=config("API_SECRET"))
+
     # Datos para ejemplo
-    symbol = "manausdt"
     interval = tf.KLINE_INTERVAL_15MINUTE
     
     try:
@@ -34,7 +58,7 @@ async def main():
         #await exchange.user_socket(callback=process_message)
 
         # Probando extraer Exchange Mode - OK
-        await exchange.get_current_position_mode()
+        #await exchange.get_current_position_mode()
         #print(exchange.hedge_mode)
         ## La información que retorna solo es de la posición colocada más no de la posición abierta
         market_order_params = {
