@@ -65,8 +65,8 @@ class LarryConnorsModOneStrategy(Strategy):
         """        
         data = await self._exchange.get_klines(
             symbol=self._asset.symbol,
-            # interval=tf.KLINE_INTERVAL_4HOUR
-            interval=tf.KLINE_INTERVAL_1MINUTE,
+            interval=tf.KLINE_INTERVAL_4HOUR
+            #interval=tf.KLINE_INTERVAL_1MINUTE,
         )
         data = await create_dataframe(data)
         return data
@@ -87,12 +87,13 @@ class LarryConnorsModOneStrategy(Strategy):
             # BUY SIGNAL
             if close > ma265:
                 if close < ma11 and previous_rsi < 9 and rsi > 9:
-                    print(f"{'*' * 50}LONG - {self._asset.symbol.upper()}{'*' * 50}")
+                    print(f"{'*' * 50}LONG - {self._asset.symbol.upper()}\{'*' * 50}")
                     print("Ejecutando compra")
                     self._position_open = True
                     self._position_side = "LONG"
-                    msg = f"{'*'*50}🟢 LONG\n{self._asset.symbol.upper()}\n{close}\n{'*'*50}"
-                    TelegramNotifier.send_message(msg=msg)
+                    msg = f"{'*'*50}\n🟢 LONG \n{self._asset.symbol.upper()} ${close}\n{'*'*50}"
+                    print(msg)
+                    await TelegramNotifier.send_message(msg=msg)
                     
 
             # SELL SIGNAL
@@ -102,8 +103,9 @@ class LarryConnorsModOneStrategy(Strategy):
                     print("Ejecutando Venta")
                     self._position_open = True
                     self._position_side = "SHORT"
-                    msg = f"{'*'*50}🔴 LONG\n{self._asset.symbol.upper()}\n{close}{'*'*50}"
-                    TelegramNotifier.send_message(msg=msg)
+                    msg = f"{'*'*50}\n🔴 SHORT\n{self._asset.symbol.upper()} ${close}\n{'*'*50}"
+                    print(msg)
+                    await TelegramNotifier.send_message(msg=msg)
         
         else:
             # Here we have Position Open, so we need to close it
@@ -115,8 +117,9 @@ class LarryConnorsModOneStrategy(Strategy):
                     print("Posición Cerrada")
                     self._position_open = False
                     self._position_side = ""
-                    msg = f"{'*'*50}CERRAR LONG\n{self._asset.symbol.upper()}\n{close}{'*'*50}"
-                    TelegramNotifier.send_message(msg=msg)
+                    msg = f"{'*'*50}CERRAR LONG\n{self._asset.symbol.upper()}\n{close}\n{'*'*50}"
+                    print(msg)
+                    await TelegramNotifier.send_message(msg=msg)
             
             # Close Short
             if self._position_side == "SHORT":
@@ -126,7 +129,8 @@ class LarryConnorsModOneStrategy(Strategy):
                     self._position_open = False
                     self._position_side = ""
                     msg = f"{'*'*50}LONG\n{self._asset.symbol.upper()}\n{close}\n{'*'*50}"
-                    TelegramNotifier.send_message(msg=msg)
+                    print(msg)
+                    await TelegramNotifier.send_message(msg=msg)
         
 
     async def _process_data(self, msg: dict):
@@ -155,6 +159,7 @@ class LarryConnorsModOneStrategy(Strategy):
         print("Setting up Strategy")
         print("Starting")
         await self._setup_strategy()
+        await self._analyze_data()
         await self._exchange.kline_socket(
-            symbol=self._asset.symbol, timeframe="4h", callback=self._process_data
+            symbol=self._asset.symbol, timeframe=tf.KLINE_INTERVAL_4HOUR, callback=self._process_data
         )
