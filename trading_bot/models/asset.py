@@ -1,5 +1,6 @@
 class Asset:
-
+    """Represetns an Asset
+    """    
     def __init__(self, symbol: str):
         self._symbol = symbol.lower()
         self._price_precision = None

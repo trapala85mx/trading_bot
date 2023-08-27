@@ -17,4 +17,10 @@ info = {
         "min_qty": '8.5',
         "min_price": '5.0507'
     },
+    "galausdt": {
+        "price_precision": '5',
+        "qty_precision": '0',
+        "min_qty": '265',
+        "min_price": '5.0112'
+    },
 }
